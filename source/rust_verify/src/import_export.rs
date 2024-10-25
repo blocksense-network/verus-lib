@@ -7,24 +7,24 @@ use std::sync::Arc;
 use vir::ast::{Krate, Mode, VirErr};
 
 #[derive(Debug, Deserialize, Serialize)]
-pub(crate) struct CrateMetadata {
+pub struct CrateMetadata {
     pub crate_id: u64,
     pub original_files: HashMap<Vec<u8>, FileStartEndPos>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub(crate) struct CrateWithMetadata {
+pub struct CrateWithMetadata {
     krate: Krate,
     metadata: CrateMetadata,
 }
 
-pub(crate) struct ImportOutput {
-    pub(crate) crate_names: Vec<String>,
-    pub(crate) vir_crates: Vec<Krate>,
-    pub(crate) metadatas: Vec<CrateMetadata>,
+pub struct ImportOutput {
+    pub crate_names: Vec<String>,
+    pub vir_crates: Vec<Krate>,
+    pub metadatas: Vec<CrateMetadata>,
 }
 
-pub(crate) fn import_crates(
+pub fn import_crates(
     args: &Args,
     import_virs_via_cargo: Vec<(String, String)>,
 ) -> Result<ImportOutput, VirErr> {
@@ -58,7 +58,7 @@ pub(crate) fn import_crates(
     Ok(ImportOutput { crate_names, vir_crates, metadatas })
 }
 
-pub(crate) fn export_crate(
+pub fn export_crate(
     args: &Args,
     export_vir_path_via_cargo: &Option<std::path::PathBuf>,
     vir_metadata: CrateMetadata,
