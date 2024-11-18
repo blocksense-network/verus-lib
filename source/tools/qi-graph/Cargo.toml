@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 serde = { version = "1", features = ["derive", "rc"] }
 bincode = "1.3"
-getopts = "*"
+getopts = { git = "https://github.com/utaal/getopts.git", branch = "parse-partial" }
 petgraph = "0.5.1"
 serde_json = { version = "1", features = ["preserve_order"] }
 internals_interface = { path = "../internals_interface" }
