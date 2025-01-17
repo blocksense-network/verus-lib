@@ -8,6 +8,7 @@
 use crate::def::Spanned;
 use crate::messages::{Message, Span};
 pub use air::ast::{Binder, Binders, BinderX};
+pub use air::ast::Quant as AirQuant;
 use num_bigint::BigInt;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -726,7 +727,7 @@ pub enum AssertQueryMode {
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Quant {
-    pub quant: air::ast::Quant,
+    pub quant: AirQuant,
 }
 
 /// Computation mode for assert_by_compute
