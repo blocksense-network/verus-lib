@@ -293,7 +293,7 @@ pub struct Verifier {
     // Some(DepTracker) if via_cargo_args.is_some(), None otherwise
     // In both cases, is set to None when VerifierCallbacksEraseMacro.config finishes with it
     dep_tracker: Option<crate::cargo_verus_dep_tracker::DepTracker>,
-    import_virs_via_cargo: Option<Vec<(String, String)>>,
+    pub import_virs_via_cargo: Option<Vec<(String, String)>>,
     export_vir_path_via_cargo: Option<std::path::PathBuf>,
     pub(crate) compile: bool,
 
