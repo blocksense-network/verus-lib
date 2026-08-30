@@ -11,8 +11,12 @@ sise = "0.6.0"
 getopts = { git = "https://github.com/utaal/getopts.git", branch = "parse-partial" }
 z3tracer = { git = "https://github.com/verus-lang/smt2utils.git", rev = "ec4c894d04d7cd39c9a8aa1eda51db71cc54fe61" }
 serde = { version = "1", features = ["derive", "rc"] }
+serde_json = "1"
 indexmap = { version = "1" }
 yansi = "0.5"
+
+[dev-dependencies]
+sise = "0.6.0"
 
 [target.'cfg(windows)'.dependencies]
 win32job = "1"
