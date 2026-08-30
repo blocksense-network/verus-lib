@@ -225,8 +225,8 @@ pub(crate) fn lower_query(query: &Query) -> (Query, Snapshots, Vec<Decl>) {
     let mut versions: IndexMap<Ident, u32> = IndexMap::new();
     let break_versions: HashMap<Ident, Vec<IndexMap<Ident, u32>>> = HashMap::new();
     let version_decls: HashSet<Ident> = HashSet::new();
-    let mut snapshots: Snapshots = HashMap::new();
-    let all_snapshots: Snapshots = HashMap::new();
+    let mut snapshots: Snapshots = IndexMap::new();
+    let all_snapshots: Snapshots = IndexMap::new();
     let mut types: HashMap<Ident, Typ> = HashMap::new();
     let mut local_vars: Vec<Decl> = Vec::new();
 

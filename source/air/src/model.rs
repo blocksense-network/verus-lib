@@ -157,15 +157,18 @@ impl Model {
         })
     }
 
-    /// Snapshot ids, sorted, so that two runs over the same model enumerate the
-    /// same points in the same order. (`Snapshots` is a `HashMap`, so there is no
-    /// declaration order to preserve.) Sorted order is **not** program order: a
-    /// consumer that wants to step through the snapshots has to position them
-    /// from the source spans its own front end recorded, not from this order.
+    /// Snapshot ids **in program order** -- the order `var_to_const` reached the
+    /// `snapshot` statements while walking the query. This is what makes the
+    /// counterexample steppable: a consumer can walk these points in this order
+    /// and be walking the path the model forced. Sorting them instead would be
+    /// deterministic and wrong, which is worse.
+    ///
+    /// What this order does *not* carry is source positions. The snapshot-to-span
+    /// map is built in `vir`/`rust_verify` (`SnapPos`), not here, so a consumer
+    /// that wants to put a value next to a line has to supply that mapping
+    /// itself.
     pub fn snapshot_ids(&self) -> Vec<Ident> {
-        let mut ids: Vec<Ident> = self.id_snapshots.keys().cloned().collect();
-        ids.sort();
-        ids
+        self.id_snapshots.keys().cloned().collect()
     }
 
     /// The assignments in force at one program point, in the order the query
