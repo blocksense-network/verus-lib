@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
   "air",
+  "venir-reporter-bridge",
   "builtin",
   "builtin_macros",
   "cargo-verus",
