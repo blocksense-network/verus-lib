@@ -1,6 +1,5 @@
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::sync::Arc;
 
 use crate::messages::ArcDynMessage;
@@ -10,7 +9,12 @@ pub type TypeError = String;
 pub type Ident = Arc<String>;
 
 pub(crate) type Snapshot = IndexMap<Ident, u32>;
-pub(crate) type Snapshots = HashMap<Ident, Snapshot>;
+/// Insertion-ordered, not hashed: `var_to_const` inserts one entry per
+/// `snapshot` statement as it walks the query, so the iteration order is the
+/// order the program reaches those points. A counterexample reported out of this
+/// map is therefore in program order rather than in an arbitrary one, which is
+/// the difference between a steppable trace and a bag of values.
+pub(crate) type Snapshots = IndexMap<Ident, Snapshot>;
 
 pub type Typ = Arc<TypX>;
 pub type Typs = Arc<Vec<Typ>>;

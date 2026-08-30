@@ -94,15 +94,17 @@ MUTATIONS = [
     ),
     Mutation(
         "M9", MODEL,
-        "        ids.sort();\n        ids",
-        "        ids.sort();\n        ids.reverse();\n        ids",
-        "c10_snapshots_are_emitted_in_a_stable_order_and_carry_the_solver_s_sorts",
+        "        self.id_snapshots.keys().cloned().collect()",
+        "        let mut ids: Vec<Ident> = self.id_snapshots.keys().cloned().collect();\n"
+        "        ids.sort();\n"
+        "        ids",
+        "c10_snapshots_are_emitted_in_program_order_and_carry_the_solver_s_sorts",
     ),
     Mutation(
         "M10", MODEL,
         "            typ: typ_to_smt_name(&def.ret),",
         '            typ: "Int".to_string(),',
-        "c10_snapshots_are_emitted_in_a_stable_order_and_carry_the_solver_s_sorts",
+        "c10_snapshots_are_emitted_in_program_order_and_carry_the_solver_s_sorts",
     ),
     Mutation(
         "M11", MODEL,

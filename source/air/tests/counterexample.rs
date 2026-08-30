@@ -502,8 +502,9 @@ fn c8_a_counterexample_with_no_bindings_is_not_populated() {
 // C10 -- the emitted order is stable, and sorts are the solver's own
 // ---------------------------------------------------------------------------
 
-/// Snapshots are declared `zeta` then `alpha`, so declaration order and sorted
-/// order disagree and the check can tell which one was emitted. `flag` is a Bool
+/// Snapshots are reached as `zeta` then `alpha`, so program order and sorted
+/// order disagree and the check can tell which one was emitted -- a sorted list
+/// would be deterministic and would step the program backwards. `flag` is a Bool
 /// so that the sort a binding reports is not always `Int`.
 const ORDERING: &str = r#"
 (check-valid
@@ -523,7 +524,7 @@ const ORDERING: &str = r#"
 "#;
 
 #[test]
-fn c10_snapshots_are_emitted_in_a_stable_order_and_carry_the_solver_s_sorts() {
+fn c10_snapshots_are_emitted_in_program_order_and_carry_the_solver_s_sorts() {
     let _lock = reporting_lock();
     let mut c = Counted::new("C10");
     let run = run_query(ORDERING, true);
@@ -531,7 +532,7 @@ fn c10_snapshots_are_emitted_in_a_stable_order_and_carry_the_solver_s_sorts() {
     let cx = &run.counterexamples[0];
 
     let ids: Vec<&str> = cx.snapshots.iter().map(|s| s.snapshot_id.as_str()).collect();
-    c.eq("snapshots come out sorted, not in declaration order", ids, vec!["alpha", "zeta"]);
+    c.eq("snapshots come out in program order, not sorted", ids, vec!["zeta", "alpha"]);
 
     let zeta = snapshot(cx, "zeta");
     let alpha = snapshot(cx, "alpha");
