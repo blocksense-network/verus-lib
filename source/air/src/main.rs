@@ -40,6 +40,11 @@ pub fn main() {
     opts.optopt("", "log-smt", "Log SMT queries", "FILENAME");
     opts.optopt("", "log-smt-transcript", "Log complete SMT transcript", "FILENAME");
     opts.optflag("", "ignore-unexpected-smt", "Ignore unexpected SMT output");
+    opts.optflag(
+        "",
+        "print-model",
+        "Print the solver's counterexample model as JSON for each invalid query",
+    );
     opts.optflag("d", "debug", "Debug verification failures");
     opts.optflag(
         "p",
@@ -115,6 +120,7 @@ pub fn main() {
     }
     let ignore_unexpected_smt = matches.opt_present("ignore-unexpected-smt");
     air_context.set_ignore_unexpected_smt(ignore_unexpected_smt);
+    air::model::set_report_counterexample(matches.opt_present("print-model"));
 
     // Start logging
     if let Some(filename) = matches.opt_str("log-air-middle") {

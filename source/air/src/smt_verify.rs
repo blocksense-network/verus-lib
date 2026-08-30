@@ -364,7 +364,9 @@ pub(crate) fn smt_check_assertion<'ctx>(
                 usage_info,
             )
         }
-        ResultDetermination::Undetermined(false) => smt_get_model(context, infos, air_model),
+        ResultDetermination::Undetermined(false) => {
+            smt_get_model(context, diagnostics, infos, air_model)
+        }
     }
 }
 
@@ -409,8 +411,9 @@ pub(crate) fn smt_update_statistics(context: &mut Context) -> Result<(), Validit
 
 fn smt_get_model(
     context: &mut Context,
+    diagnostics: &impl Diagnostics,
     mut infos: Vec<AssertionInfo>,
-    air_model: Model,
+    mut air_model: Model,
 ) -> ValidityResult {
     let mut discovered_error: Option<AssertionInfo> = None;
     let mut discovered_assert_id: Option<Option<Arc<Vec<u64>>>> = None;
@@ -433,6 +436,11 @@ fn smt_get_model(
     for def in model.iter() {
         model_defs.insert(def.name.clone(), def.clone());
     }
+    // The solver's assignments were parsed above and, until VN-M5, were consulted
+    // only for the `%%location_label%%` that is `true` and then dropped. Hand them
+    // to the model, which is the thing that knows which constant each source-level
+    // variable was renamed to at each program point.
+    air_model.set_defs(model_defs.clone());
     for info in infos.iter_mut() {
         if let Some(def) = model_defs.get(&info.label) {
             if *def.body == "true" {
@@ -477,6 +485,20 @@ fn smt_get_model(
 
     let error = discovered_error.error;
     let e = context.message_interface.append_labels(&error, &discovered_additional_info);
+
+    // The counterexample is reported *before* the error it explains, because the
+    // error is returned to the caller and reported by it. A consumer therefore
+    // attaches a counterexample note to the error that follows it, and checks the
+    // `assert_id` carried here against the one the caller receives.
+    if crate::model::report_counterexample_enabled() {
+        let mut cx = air_model.counterexample();
+        cx.assert_id =
+            discovered_assert_id.as_ref().and_then(|id| id.as_ref()).map(|id| (**id).clone());
+        let level = crate::messages::MessageLevel::Note;
+        let note = crate::model::counterexample_note(&cx);
+        diagnostics.report(&context.message_interface.bare(level, &note));
+    }
+
     context.state = ContextState::FoundInvalid(infos, Some(air_model.clone()));
     ValidityResult::Invalid(Some(air_model), Some(e), discovered_assert_id.unwrap())
 }
